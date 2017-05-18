@@ -19,9 +19,11 @@ import java.util.zip.Inflater;
 
 public class PageFragment extends Fragment {
 
-    public static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
+    public static final String ARGUMENT_PAGE_NUMBER = "arg_page_number",
+                               SAVE_PAGE_NUMBER = "save_paage_number";
 
     private int pageNumber, backColor;
+    private String message;
 
     public static final PageFragment newInstance(final int page) {
 
@@ -36,9 +38,20 @@ public class PageFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         pageNumber = getArguments().getInt(ARGUMENT_PAGE_NUMBER);
+        message = "PageFragment.onCreate(), pageNumber = " + pageNumber;
+        Messager.sendToAllRecipients(getContext(), message);
 
         Random rnd = new Random();
         backColor = Color.argb(40, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+
+        int savedPageNumber = -1;
+
+        if (savedInstanceState != null) {
+            savedPageNumber = savedInstanceState.getInt(SAVE_PAGE_NUMBER);
+        }
+        message = "savedPageNumber =" + savedPageNumber;
+        Messager.sendToAllRecipients(getContext(), message);
+
     }
 
     @Nullable
@@ -54,12 +67,27 @@ public class PageFragment extends Fragment {
             if (i%15 == 0) {
                 text1 += "\n";
             }
-            text1 += text2;
+            text1 += text2 + " " + i;
         }
         tvPage.setText(text1);
         tvPage.setBackgroundColor(backColor);
         tvPage.setMovementMethod(new ScrollingMovementMethod());
 
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(SAVE_PAGE_NUMBER, pageNumber);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        message = "PageFragment.onDestroy(), pageNumber = " + pageNumber;
+        Messager.sendToAllRecipients(getContext(), message);
     }
 }
