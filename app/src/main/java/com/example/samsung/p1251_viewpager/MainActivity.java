@@ -71,5 +71,10 @@ public class MainActivity extends FragmentActivity {
         public int getCount() {
             return PAGE_COUNT;
         }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return "Totle " + position;
+        }
     }
 }
